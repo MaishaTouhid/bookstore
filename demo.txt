@@ -1,0 +1,409 @@
+const mysql = require("mysql2");
+const db = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+   password: "mbtworthy"
+
+});
+
+db.connect((err) => {
+    if (err) throw err;
+    console.log("MySQL Connected");
+    db.query("CREATE DATABASE IF NOT EXISTS book_management");
+    db.query("USE book_management");
+    db.query(`
+    CREATE TABLE IF NOT EXISTS books(
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(100),
+        author VARCHAR(100),
+        publisher VARCHAR(100),
+        price DOUBLE,
+        quantity INT
+
+    )
+
+    `);
+
+});
+
+module.exports = db
+
+//model
+const db = require("../config/db");
+
+// Insert Book
+exports.insertBook = (data, callback) => {
+
+    const sql = `
+    INSERT INTO books
+    (title, author, publisher, price, quantity)
+    VALUES (?, ?, ?, ?, ?)
+    `;
+
+    db.query(
+        sql,
+        [
+            data.title,
+            data.author,
+            data.publisher,
+            data.price,
+            data.quantity
+        ],
+        callback
+    );
+
+};
+
+// Show All Books
+exports.getBooks = (callback) => {
+
+    db.query("SELECT * FROM books", callback);
+
+};
+
+// Delete Book
+exports.deleteBook = (id, callback) => {
+
+    db.query(
+        "DELETE FROM books WHERE id=?",
+        [id],
+        callback
+    );
+
+};
+
+// Get One Book
+exports.getBookById = (id, callback) => {
+
+    db.query(
+        "SELECT * FROM books WHERE id=?",
+        [id],
+        callback
+    );
+
+};
+
+// Update Book
+exports.updateBook = (id, data, callback) => {
+
+    const sql = `
+    UPDATE books
+    SET
+    title=?,
+    author=?,
+    publisher=?,
+    price=?,
+    quantity=?
+    WHERE id=?
+    `;
+
+    db.query(
+        sql,
+        [
+            data.title,
+            data.author,
+            data.publisher,
+            data.price,
+            data.quantity,
+            id
+        ],
+        callback
+    );
+
+};
+
+//controller
+const Book = require("../models/bookModel");
+
+// Show Form
+exports.showForm = (req, res) => {
+
+    res.render("form");
+
+};
+
+// Add Book
+exports.addBook = (req, res) => {
+
+    Book.insertBook(req.body, (err) => {
+
+        if (err) throw err;
+
+        res.redirect("/books");
+
+    });
+
+};
+
+// Show All Books
+exports.showBooks = (req, res) => {
+
+    Book.getBooks((err, result) => {
+
+        if (err) throw err;
+
+        res.render("result", {
+            books: result
+        });
+
+    });
+
+};
+
+// Delete Book
+exports.deleteBook = (req, res) => {
+
+    Book.deleteBook(req.params.id, (err) => {
+
+        if (err) throw err;
+
+        res.redirect("/books");
+
+    });
+
+};
+
+// Edit Form
+exports.editBook = (req, res) => {
+
+    Book.getBookById(req.params.id, (err, result) => {
+
+        if (err) throw err;
+
+        res.render("edit", {
+            book: result[0]
+        });
+
+    });
+
+};
+
+// Update Book
+exports.updateBook = (req, res) => {
+
+    Book.updateBook(
+        req.params.id,
+        req.body,
+        (err) => {
+
+            if (err) throw err;
+
+            res.redirect("/books");
+
+        }
+    );
+
+};
+
+//routes
+const express = require("express");
+
+const router = express.Router();
+
+const bookController = require("../controllers/bookController");
+
+// Form Page
+router.get("/", bookController.showForm);
+
+// Insert Book
+router.post("/submit", bookController.addBook);
+
+// Show All Books
+router.get("/books", bookController.showBooks);
+
+// Delete Book
+router.get("/delete/:id", bookController.deleteBook);
+
+// Edit Page
+router.get("/edit/:id", bookController.editBook);
+
+// Update Book
+router.post("/update/:id", bookController.updateBook);
+
+module.exports = router;
+
+//app.js
+
+const express = require("express");
+const { engine } = require("express-handlebars");
+
+const app = express();
+
+require("./config/db");
+
+const routes = require("./routes/bookRoutes");
+
+app.use(express.urlencoded({ extended: true }));
+
+app.engine("handlebars", engine());
+
+app.set("view engine", "handlebars");
+
+app.set("views", "./views");
+
+app.use("/", routes);
+
+app.listen(3000, () => {
+
+    console.log("Server Running http://localhost:3000");
+
+});
+
+//main
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Book Management System</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+
+{{{body}}}
+
+</div>
+
+</body>
+
+</html>
+
+//edit
+
+<div class="card shadow p-4">
+<h2 class="text-center mb-4"> Edit Book </h2>
+
+<form action="/update/{{book.id}}" method="POST">
+
+<div class="mb-3">
+<label>Book Title</label>
+<input type="text" class="form-control" name="title" value="{{book.title}}" required>
+</div>
+
+<div class="mb-3">
+<label>Author</label>
+<input type="text" class="form-control" name="author" value="{{book.author}}" required>
+</div>
+
+<div class="mb-3">
+<label>Publisher</label>
+<input type="text" class="form-control" name="publisher" value="{{book.publisher}}" required>
+</div>
+
+<div class="mb-3">
+<label>Price</label>
+<input type="number" class="form-control" name="price" value="{{book.price}}" required>
+</div>
+
+<div class="mb-3">
+<label>Quantity</label>
+<input type="number" class="form-control" name="quantity" value="{{book.quantity}}" required>
+</div>
+
+<button class="btn btn-success w-100"> Update Book </button>
+
+</form>
+</div>
+
+//form
+<div class="card shadow p-4">
+<h2 class="text-center mb-4"> Book Information Form </h2>
+
+<form action="/submit" method="POST">
+
+<div class="mb-3">
+<label>Book Title</label>
+<input type="text" class="form-control" name="title" required>
+</div>
+
+<div class="mb-3">
+<label>Author</label>
+<input type="text" class="form-control" name="author" required>
+</div>
+
+<div class="mb-3">
+<label>Publisher</label>
+<input type="text" class="form-control" name="publisher" required>
+</div>
+
+<div class="mb-3">
+<label>Price</label>
+<input type="number" class="form-control" name="price" required>
+</div>
+
+<div class="mb-3">
+<label>Quantity</label>
+<input type="number" class="form-control" name="quantity" required>
+</div>
+
+<button class="btn btn-primary w-100"> Save Book </button>
+
+</form>
+<hr>
+
+<a href="/books" class="btn btn-success w-100"> View All Books </a>
+
+</div>
+
+//result
+
+<h2 class="mb-4"> All Books </h2>
+
+<a href="/" class="btn btn-primary mb-3"> Add New Book </a>
+
+<table class="table table-bordered table-hover">
+<thead class="table-dark">
+
+<tr>
+
+<th>ID</th>
+<th>Title</th>
+<th>Author</th>
+<th>Publisher</th>
+<th>Price</th>
+<th>Quantity</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{{#each books}}
+
+<tr>
+
+<td>{{id}}</td>
+
+<td>{{title}}</td>
+
+<td>{{author}}</td>
+
+<td>{{publisher}}</td>
+
+<td>{{price}}</td>
+
+<td>{{quantity}}</td>
+
+<td>
+
+<a href="/edit/{{id}}" class="btn btn-warning btn-sm"> Edit </a>
+
+<a href="/delete/{{id}}" class="btn btn-danger btn-sm"> Delete </a>
+
+</td>
+
+</tr>
+
+{{/each}}
+
+</tbody>
+
+</table>
