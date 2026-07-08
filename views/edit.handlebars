@@ -1,84 +1,35 @@
-<div class="card shadow p-4">
-
-<h2 class="text-center mb-4">
-
-Edit Book
-
-</h2>
+<div >
+<h2 class="text-center "> Edit Book </h2>
 
 <form action="/update/{{book.id}}" method="POST">
 
 <div class="mb-3">
-
 <label>Book Title</label>
-
-<input
-type="text"
-class="form-control"
-name="title"
-value="{{book.title}}"
-required>
-
+<input type="text" class="form-control" name="title" value="{{book.title}}" required>
 </div>
 
 <div class="mb-3">
-
 <label>Author</label>
-
-<input
-type="text"
-class="form-control"
-name="author"
-value="{{book.author}}"
-required>
-
+<input type="text" class="form-control" name="author" value="{{book.author}}" required>
 </div>
 
 <div class="mb-3">
-
 <label>Publisher</label>
-
-<input
-type="text"
-class="form-control"
-name="publisher"
-value="{{book.publisher}}"
-required>
-
+<input type="text" class="form-control" name="publisher" value="{{book.publisher}}" required>
 </div>
 
 <div class="mb-3">
-
 <label>Price</label>
-
-<input
-type="number"
-class="form-control"
-name="price"
-value="{{book.price}}"
-required>
-
+<input type="number" class="form-control" name="price" value="{{book.price}}" required>
 </div>
 
 <div class="mb-3">
-
 <label>Quantity</label>
-
-<input
-type="number"
-class="form-control"
-name="quantity"
-value="{{book.quantity}}"
-required>
-
+<input type="number" class="form-control" name="quantity" value="{{book.quantity}}" required>
 </div>
 
-<button class="btn btn-success w-100">
-
-Update Book
-
-</button>
+<button > Update Book </button>
 
 </form>
-
 </div>
+

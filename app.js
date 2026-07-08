@@ -5,7 +5,7 @@ const app = express();
 
 require("./config/db");
 
-const routes = require("./routes/bookRoutes");
+const routes = require("./routes/routes");
 
 app.use(express.urlencoded({ extended: true }));
 

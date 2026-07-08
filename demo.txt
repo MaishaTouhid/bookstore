@@ -113,7 +113,7 @@ exports.updateBook = (id, data, callback) => {
 };
 
 //controller
-const Book = require("../models/bookModel");
+const Book = require("../models/model");
 
 // Show Form
 exports.showForm = (req, res) => {
@@ -195,30 +195,29 @@ exports.updateBook = (req, res) => {
 
 };
 
-//routes
 const express = require("express");
 
 const router = express.Router();
 
-const bookController = require("../controllers/bookController");
+const bookController = require("../controllers/controller");
 
 // Form Page
-router.get("/", bookController.showForm);
+router.get("/", controller.showForm);
 
 // Insert Book
-router.post("/submit", bookController.addBook);
+router.post("/submit", controller.addBook);
 
 // Show All Books
-router.get("/books", bookController.showBooks);
+router.get("/books", controller.showBooks);
 
 // Delete Book
-router.get("/delete/:id", bookController.deleteBook);
+router.get("/delete/:id", controller.deleteBook);
 
 // Edit Page
-router.get("/edit/:id", bookController.editBook);
+router.get("/edit/:id", controller.editBook);
 
 // Update Book
-router.post("/update/:id", bookController.updateBook);
+router.post("/update/:id", controller.updateBook);
 
 module.exports = router;
 

@@ -1,4 +1,4 @@
-const Book = require("../models/bookModel");
+const Book = require("../models/model");
 
 // Show Form
 exports.showForm = (req, res) => {
