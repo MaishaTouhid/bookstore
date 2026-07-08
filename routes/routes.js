@@ -21,5 +21,7 @@ router.get("/edit/:id",controller.editBook);
 
 // Update Book
 router.post("/update/:id",controller.updateBook);
+//search book
+router.get("/search", controller.searchBook);
 
 module.exports = router;

@@ -80,3 +80,22 @@ exports.updateBook = (id, data, callback) => {
     );
 
 };
+
+//search book
+exports.searchBook = (keyword, callback) => {
+
+    const sql = `
+        SELECT *
+        FROM books
+        WHERE
+            title LIKE ?
+            OR author LIKE ?
+    `;
+
+    db.query(
+        sql,
+        [`%${keyword}%`, `%${keyword}%`],
+        callback
+    );
+
+};

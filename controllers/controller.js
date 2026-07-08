@@ -79,3 +79,23 @@ exports.updateBook = (req, res) => {
     );
 
 };
+
+//search book
+exports.searchBook = (req, res) => {
+
+    const keyword = req.query.keyword;
+
+    Book.searchBook(keyword, (err, books) => {
+
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        res.render("result", {
+            books
+        });
+
+    });
+
+};
